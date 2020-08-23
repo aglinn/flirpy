@@ -129,7 +129,7 @@ class Boson(Core):
         return port
 
     @classmethod
-    def find_video_device(self):
+    def find_video_device(self, device_id=None):
         """
         Attempts to automatically detect which video device corresponds to the Boson by searching for the PID and VID.
 
@@ -143,7 +143,10 @@ class Boson(Core):
 
         if sys.platform.startswith('win32'):
             device_check_path = pkg_resources.resource_filename('flirpy', 'bin/find_cameras.exe')
-            device_id = int(subprocess.check_output([device_check_path, "FLIR Video"]).decode())
+            if device_id == None:
+                device_id = int(subprocess.check_output([device_check_path, "FLIR Video"]).decode())
+            else:
+                _ = int(subprocess.check_output([device_check_path, "FLIR Video"]).decode())
             print("Device ID:", device_id)
             if device_id >= 0:
                 return device_id
