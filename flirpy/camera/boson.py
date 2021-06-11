@@ -340,6 +340,27 @@ class Boson(Core):
 
         return 
         
+    def get_ffc_in_progress(self):
+        """
+        Returns the mode of the FFC state machine.
+
+        0 = Not in progress
+        1 = In progress
+
+        Returns
+        -------
+
+            int
+                FFC state   
+
+        """
+        function_id = 0x0005000C
+
+        res = self._send_packet(function_id, receive_size=2)
+        res = self._decode_packet(res, receive_size=2)
+
+        return struct.unpack(">H", res)[0]
+
     def get_ffc_state(self):
         """
         Returns the FFC state:
@@ -358,15 +379,15 @@ class Boson(Core):
         -------
 
             int
-                FFC state   
+                FFC state
 
         """
-        function_id = 0x0005000C
+        function_id = 0x00050054
 
-        res = self._send_packet(function_id, receive_size=2)
-        res = self._decode_packet(res, receive_size=2)
+        res = self._send_packet(function_id, receive_size=4)
+        res = self._decode_packet(res, receive_size=4)
 
-        return struct.unpack(">H", res)[0]
+        return struct.unpack(">I", res)[0]
 
     def get_ffc_mode(self):
         """
@@ -598,7 +619,10 @@ class Boson(Core):
         res = self._send_packet(function_id, receive_size=2)
         res = self._decode_packet(res, receive_size=2)
 
-        return struct.unpack(">H", res)[0]/10.0
+        try:
+            return struct.unpack(">H", res)[0]/10.0
+        except:
+            return 50.0
 
     def get_camera_serial(self):
         """
